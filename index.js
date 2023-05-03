@@ -28,7 +28,7 @@ module.exports = function(app) {
       let path = dict.path;
       let value = dict.value;
       switch (path) {
-        case 'environment.wind.speedApparent':
+        case 'environment.wind.speedTrue':
           let now = new Date();
           windSpeed.push({
             date: now,
@@ -52,10 +52,10 @@ module.exports = function(app) {
       app.debug(`Publishing gust ${fiveMinuteGust} and ${oneHourGust}`);
  
       var values = [{
-          path: 'environment.wind.fiveMinutes.gustApparent',
+          path: 'environment.wind.fiveMinutes.gustTrue',
           value: fiveMinuteGust
         }, {
-          path: 'environment.wind.oneHour.gustApparent',
+          path: 'environment.wind.oneHour.gustTrue',
           value: oneHourGust
       }];
       app.handleMessage('gusts', {
@@ -69,7 +69,7 @@ module.exports = function(app) {
     let subscription = {
       context: 'vessels.self',
       subscribe: [{
-        path: 'environment.wind.speedApparent',
+        path: 'environment.wind.speedTrue',
         period: 100
       }]
     };
