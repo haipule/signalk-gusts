@@ -44,14 +44,20 @@ module.exports = function(app) {
   
     function publishGusts() {
       let now = new Date();
+      let oneMinute = windSpeed.filter(item => (now - item.date) <= 60*1000);
+      let oneMinuteArray = Array.from(Object.values(oneMinute), item => item.speed);
       let fiveMinutes = windSpeed.filter(item => (now - item.date) <= 5*60*1000);
       let fiveMinuteArray = Array.from(Object.values(fiveMinutes), item => item.speed);
       let oneHourArray = Array.from(Object.values(windSpeed), item => item.speed);
+      let oneMinuteGust = Math.max(...oneMinuteArray);
       let fiveMinuteGust = Math.max(...fiveMinuteArray);
       let oneHourGust = Math.max(...oneHourArray);
       app.debug(`Publishing gust ${fiveMinuteGust} and ${oneHourGust}`);
  
       var values = [{
+          path: 'environment.wind.oneMinute.gustTrue',
+          value: oneMinuteGust
+        }, {
           path: 'environment.wind.fiveMinutes.gustTrue',
           value: fiveMinuteGust
         }, {

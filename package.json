@@ -1,6 +1,6 @@
 {
   "name": "signalk-gusts",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Calculate and publish wind gusts",
   "main": "index.js",
   "scripts": {
