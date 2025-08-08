@@ -6,7 +6,7 @@ module.exports = function(app) {
   plugin.description = "Calculates and publishes wind gusts";
   var unsubscribes = [];
   var windSpeed = [];
-  var currentUnits = "m/s"; // Default units, falls nicht vom Signal angegeben
+  var currentUnits = "m/s"; // Default units, if not set
 
   plugin.start = function(options) {
     function processDelta(data) {
@@ -47,15 +47,15 @@ module.exports = function(app) {
       var values = [{
           path: 'environment.wind.oneMinute.gustTrue',
           value: oneMinuteGust,
-          meta: { units: currentUnits } // Hier die Units hinzufügen
+          meta: { units: currentUnits } 
         }, {
           path: 'environment.wind.fiveMinutes.gustTrue',
           value: fiveMinuteGust,
-          meta: { units: currentUnits } // Hier die Units hinzufügen
+          meta: { units: currentUnits } 
         }, {
           path: 'environment.wind.oneHour.gustTrue',
           value: oneHourGust,
-          meta: { units: currentUnits } // Hier die Units hinzufügen
+          meta: { units: currentUnits } 
       }];
       app.handleMessage('gusts', {
         updates: [{
@@ -98,3 +98,4 @@ module.exports = function(app) {
 
   return plugin;
 }
+
