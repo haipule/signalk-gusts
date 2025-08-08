@@ -1,18 +1,3 @@
-/*
- * Copyright 2022 Ilker Temir <ilker@ilkertemir.com>
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 module.exports = function(app) {
   var plugin = {};
 
@@ -21,6 +6,7 @@ module.exports = function(app) {
   plugin.description = "Calculates and publishes wind gusts";
   var unsubscribes = [];
   var windSpeed = [];
+  var currentUnits = "m/s"; // Default units, falls nicht vom Signal angegeben
 
   plugin.start = function(options) {
     function processDelta(data) {
@@ -29,6 +15,10 @@ module.exports = function(app) {
       let value = dict.value;
       switch (path) {
         case 'environment.wind.speedTrue':
+          // Extract units if available
+          if (dict.meta && dict.meta.units) {
+            currentUnits = dict.meta.units;
+          }
           let now = new Date();
           windSpeed.push({
             date: now,
@@ -56,13 +46,16 @@ module.exports = function(app) {
  
       var values = [{
           path: 'environment.wind.oneMinute.gustTrue',
-          value: oneMinuteGust
+          value: oneMinuteGust,
+          meta: { units: currentUnits } // Hier die Units hinzufügen
         }, {
           path: 'environment.wind.fiveMinutes.gustTrue',
-          value: fiveMinuteGust
+          value: fiveMinuteGust,
+          meta: { units: currentUnits } // Hier die Units hinzufügen
         }, {
           path: 'environment.wind.oneHour.gustTrue',
-          value: oneHourGust
+          value: oneHourGust,
+          meta: { units: currentUnits } // Hier die Units hinzufügen
       }];
       app.handleMessage('gusts', {
         updates: [{
@@ -90,7 +83,10 @@ module.exports = function(app) {
     }, 2000);
   }
 
-  plugin.stop =  function() {
+  plugin.stop = function() {
+    // Clean up
+    unsubscribes.forEach(f => f());
+    unsubscribes = [];
   };
 
   plugin.schema = {
